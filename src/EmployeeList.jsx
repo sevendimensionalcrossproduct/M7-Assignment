@@ -54,12 +54,12 @@ function EmployeeRow(props) {
         setShowModal(true)
     }
     function handleClose() {
-        setShowModal(false); // Hide modal
+        setShowModal(false);
     }
 
     function handleDeleteConfirm() {
         props.deleteEmployee(props.employee._id);
-        setShowModal(false); // Hide modal after deleting
+        setShowModal(false);
     }
     return (
 	<>
