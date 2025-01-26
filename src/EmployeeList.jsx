@@ -47,45 +47,61 @@ function EmployeeTable(props) {
     )
 }
 
-function EmployeeRow(props) {
-    const [showModal, setShowModal] = React.useState(false);
-
-    function showDeleteModal() {
-        setShowModal(true)
-    }
-    function handleClose() {
-        setShowModal(false);
+class EmployeeRow extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            showModal: false, 
+        };
     }
 
-    function handleDeleteConfirm() {
-        props.deleteEmployee(props.employee._id);
-        setShowModal(false);
+    toggleModal = () => {
+        this.setState(prevState => ({
+            showModal: !prevState.showModal,
+        }));
     }
-    return (
-	<>
-        <tr>
-            <td><Link to={`/edit/${props.employee._id}`}>{props.employee.name}</Link></td>
-            <td>{props.employee.extension}</td>
-            <td>{props.employee.email}</td>
-            <td>{props.employee.title}</td>
-            <td>{props.employee.dateHired.toDateString()}</td>
-            <td>{props.employee.currentlyEmployed ? 'Yes' : 'No'}</td>
-            <td><Button variant="danger" size="sm" onClick={showDeleteModal}>X</Button></td>
-        </tr>
-	<Modal show={showModal} onHide={handleClose} centered>
-            <Modal.Header closeButton>
-                <Modal.Title>Delete Employee</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Are you sure you want to delete {props.employee.name}?
-                </Modal.Body>
-            <Modal.Footer>
-                <Button variant="success" onClick={handleClose}>Cancel</Button>
-                <Button variant="danger" onClick={handleDeleteConfirm}>Yes</Button>
-            </Modal.Footer>
-        </Modal>
-	</>
-    )
+
+    handleDeleteConfirm = () => {
+        const { deleteEmployee, employee } = this.props;
+        deleteEmployee(employee._id);
+        this.toggleModal();
+    }
+
+    render() {
+        const { employee } = this.props;
+        const { showModal } = this.state;
+
+        return (
+            <>
+                <tr>
+                    <td><Link to={`/edit/${employee._id}`}>{employee.name}</Link></td>
+                    <td>{employee.extension}</td>
+                    <td>{employee.email}</td>
+                    <td>{employee.title}</td>
+                    <td>{employee.dateHired.toDateString()}</td>
+                    <td>{employee.currentlyEmployed ? 'Yes' : 'No'}</td>
+                    <td>
+                        <Button variant="danger" size="sm" onClick={this.toggleModal}>
+                            X
+                        </Button>
+                    </td>
+
+		    <Modal show={showModal} onHide={this.toggleModal} centered>
+			    <Modal.Header closeButton>
+				<Modal.Title>Delete Employee</Modal.Title>
+			    </Modal.Header>
+			    <Modal.Body>
+				Are you sure you want to delete {employee.name}?
+			    </Modal.Body>
+			    <Modal.Footer>
+				<Button variant="success" onClick={this.toggleModal}>Cancel</Button>
+				<Button variant="danger" onClick={this.handleDeleteConfirm}>Yes</Button>
+			    </Modal.Footer>
+                    </Modal>
+                </tr>
+            </>
+        );
+    }
 }
 
 export default class EmployeeList extends React.Component {
